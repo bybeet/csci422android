@@ -29,4 +29,11 @@ public class MainActivity extends Activity {
     	intent.putExtra(EXTRA_MESSAGE, editText.getText().toString());
     	startActivity(intent);
     }
+    
+    public void sendName(View view) {
+    	Intent intent = new Intent(this, DisplayNameActivity.class);
+    	EditText editText = (EditText)findViewById(R.id.enter_name);
+    	intent.putExtra(EXTRA_MESSAGE, editText.getText().toString());
+    	startActivity(intent);
+    }
 }

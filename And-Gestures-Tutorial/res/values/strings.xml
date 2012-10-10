@@ -1,8 +1,10 @@
 <resources>
 
     <string name="app_name">And-Gestures-Tutorial</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">My two custom gestures are a star and a piece of toast.</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_game">GameActivity</string>
+    <string name="game_activity">You drew a star and are now in the game activity!</string>
 
 </resources>

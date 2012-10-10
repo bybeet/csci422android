@@ -1,4 +1,4 @@
-package com.bybeet.and_gesture;
+package com.example.and_gestures_tutorial;
 
 import android.os.Bundle;
 import android.app.Activity;

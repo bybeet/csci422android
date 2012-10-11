@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Interpolator;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 
 public class MainActivity extends Activity {
@@ -35,10 +37,17 @@ public class MainActivity extends Activity {
     
     private class PlayAreaView extends View {
 
-		private static final String DEBUG_TAG = "PlayAreaView_onDraw";
+		private static final String DEBUG_TAG = "PlayAreaView";
     	private Matrix translate;
     	private Bitmap droid;
     	private GestureDetector gestures;
+    	private Matrix animateStart;
+    	private OvershootInterpolator animateInterpolator;
+    	private long startTime;
+    	private long endTime;
+    	private float totalAnimDx;
+    	private float totalAnimDy;
+    	
     	
     	public PlayAreaView(Context context) {
 			super(context);
@@ -63,8 +72,42 @@ public class MainActivity extends Activity {
 		}
 		
 		public void onResetLocation() {
-			// TODO Auto-generated method stub
-			
+			translate.reset();
+			invalidate();
+		}
+		
+		public void onAnimateMove(float dx, float dy, long time){
+			animateStart = new Matrix(translate);
+			animateInterpolator = new OvershootInterpolator();
+			startTime = System.currentTimeMillis();
+			endTime = startTime += time;
+			totalAnimDx = dx;
+			totalAnimDy = dy;
+			post(new Runnable() {
+				@Override
+				public void run() {
+					onAnimateStep();
+				}
+			});
+		}
+		
+		private void onAnimateStep() {
+			float percentTime = (float)(System.currentTimeMillis() - startTime)/(float)(endTime - startTime);
+			System.out.println(percentTime);
+			float percentDistance = animateInterpolator.getInterpolation(percentTime);
+			float curDx = percentDistance * totalAnimDx;
+			float curDy = percentDistance * totalAnimDy;
+			translate.set(animateStart);
+			onMove(curDx, curDy);
+			Log.v(DEBUG_TAG, "We're " + percentDistance + " of the way there.");
+			if(percentTime < 1.0f){
+				post(new Runnable() {
+					@Override
+					public void run() {
+						onAnimateStep();
+					}
+				});
+			}
 		}
     	
     	@Override
